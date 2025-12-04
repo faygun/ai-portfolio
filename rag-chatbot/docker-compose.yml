@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-db
+    restart: unless-stopped
+
+    # fetch environment variables from .env file
+    env_file:
+      - ./backend/.env
+      
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # this volume is used to initialize the database with a script
+      - ./configs/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+  
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - ./backend/.env
+      
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8000
+      
+    container_name: reactapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

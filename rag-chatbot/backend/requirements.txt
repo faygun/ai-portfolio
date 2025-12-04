@@ -1,0 +1,13 @@
+asyncpg
+chromadb
+fastapi
+langchain
+langchain-chroma
+langchain-community
+langchain-core
+langchain-openai
+langchain-text-splitters
+pydantic
+python-dotenv
+python-multipart
+pypdf
